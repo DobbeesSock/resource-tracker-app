@@ -1,0 +1,135 @@
+<div style="margin-bottom:10px;">
+  <select id="profileSelect" onchange="loadProfile()"></select>
+  <button onclick="newProfile()">New Profile</button>
+  <button onclick="saveProfile()">Save</button>
+  <button onclick="resetResources()">Reset</button>
+</div>
+
+<div id="app"></div>
+
+<script>
+const defaultResources = [
+  { name: "Food", value: 0, color: "#4CAF50" },
+  { name: "Gold", value: 0, color: "#D4AF37" },
+  { name: "Energy", value: 10, max: 10, color: "#2196F3" },
+  { name: "Metal", value: 0, color: "#9E9E9E" },
+  { name: "Dragon Coins", value: 0, color: "#FF5722" },
+  { name: "Shadow Marks", value: 0, color: "#9C27B0" }
+];
+
+let resources = [];
+let currentProfile = "";
+
+function render() {
+  const app = document.getElementById("app");
+  app.innerHTML = "";
+
+  resources.forEach((res, i) => {
+    const row = document.createElement("div");
+    row.style.margin = "10px";
+    row.style.padding = "10px";
+    row.style.border = "1px solid #ccc";
+    row.style.borderLeft = `6px solid ${res.color}`;
+    row.style.display = "flex";
+    row.style.justifyContent = "space-between";
+    row.style.alignItems = "center";
+
+    const displayValue = res.max !== undefined 
+      ? `${res.value} / ${res.max}` 
+      : res.value;
+
+    row.innerHTML = `
+      <div style="width:150px;"><strong>${res.name}</strong></div>
+      <div style="font-size:22px;">${displayValue}</div>
+      <div>
+        <button onclick="change(${i}, 1)">+1</button>
+        <button onclick="change(${i}, 5)">+5</button>
+        <button onclick="change(${i}, -1)">-1</button>
+        <button onclick="change(${i}, -5)">-5</button>
+      </div>
+    `;
+
+    app.appendChild(row);
+  });
+}
+
+function change(index, amount) {
+  const res = resources[index];
+  res.value += amount;
+
+  // Handle Energy cap
+  if (res.max !== undefined) {
+    if (res.value > res.max) res.value = res.max;
+  }
+
+  // Prevent negative values
+  if (res.value < 0) res.value = 0;
+
+  saveProfile();
+  render();
+}
+
+function resetResources() {
+  resources.forEach(res => {
+    res.value = 0;
+  });
+  saveProfile();
+  render();
+}
+
+function saveProfile() {
+  if (!currentProfile) return;
+  localStorage.setItem("profile_" + currentProfile, JSON.stringify(resources));
+  updateProfileList();
+}
+
+function loadProfile() {
+  const select = document.getElementById("profileSelect");
+  currentProfile = select.value;
+
+  const data = localStorage.getItem("profile_" + currentProfile);
+  if (data) {
+    resources = JSON.parse(data);
+  } else {
+    resources = JSON.parse(JSON.stringify(defaultResources));
+  }
+
+  render();
+}
+
+function newProfile() {
+  const name = prompt("Enter profile name:");
+  if (!name) return;
+
+  currentProfile = name;
+  resources = JSON.parse(JSON.stringify(defaultResources));
+  saveProfile();
+  updateProfileList();
+  render();
+}
+
+function updateProfileList() {
+  const select = document.getElementById("profileSelect");
+  select.innerHTML = "";
+
+  Object.keys(localStorage).forEach(key => {
+    if (key.startsWith("profile_")) {
+      const name = key.replace("profile_", "");
+      const option = document.createElement("option");
+      option.value = name;
+      option.textContent = name;
+      if (name === currentProfile) option.selected = true;
+      select.appendChild(option);
+    }
+  });
+}
+
+// INIT
+updateProfileList();
+
+if (document.getElementById("profileSelect").options.length > 0) {
+  loadProfile();
+} else {
+  newProfile();
+}
+</script>
