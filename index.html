@@ -97,6 +97,7 @@ function render() {
     ${res.name === "Energy" ? `
       <button onclick="increaseMaxEnergy(1)">Max +1</button>
       <button onclick="increaseMaxEnergy(5)">Max +5</button>
+      <button onclick="increaseMaxEnergy(-1)">Max -1</button>
   ` : ""}
 </div>
     `;
@@ -180,8 +181,13 @@ function increaseMaxEnergy(amount) {
 
   energy.max += amount;
 
-  // Optional: also fill energy when upgraded
-  energy.value = energy.max;
+  // Prevent max from going below 1
+  if (energy.max < 1) energy.max = 1;
+
+  // Clamp current value if it exceeds new max
+  if (energy.value > energy.max) {
+    energy.value = energy.max;
+  }
 
   saveProfile();
   render();
