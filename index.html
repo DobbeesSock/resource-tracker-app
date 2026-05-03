@@ -24,14 +24,15 @@
     }
 
     button {
-      background: #333;
-      color: white;
-      border: 1px solid #555;
-      padding: 6px 10px;
-      margin: 2px;
-      cursor: pointer;
-      border-radius: 4px;
-    }
+  background: #333;
+  color: white;
+  border: 1px solid #555;
+  padding: 10px 14px;
+  margin: 4px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 14px;
+}
 
     button:hover {
       background: #555;
@@ -45,13 +46,13 @@
     }
 
     #app {
-    max-width: 700px;
-    margin: auto;
-    background: rgba(30, 30, 30, 0.85);
-    padding: 15px;
-    border-radius: 10px;
-    backdrop-filter: blur(6px);
-    }
+  max-width: 900px;
+  margin: auto;
+  background: rgba(30, 30, 30, 0.85);
+  padding: 20px;
+  border-radius: 12px;
+  backdrop-filter: blur(6px);
+}
   </style>
 </head>
 <body>
@@ -91,6 +92,8 @@ function render() {
     row.style.display = "flex";
     row.style.justifyContent = "space-between";
     row.style.alignItems = "center";
+    row.style.flexWrap = "wrap";
+    row.style.gap = "10px";
     row.style.borderRadius = "8px";
     row.style.background = "rgba(50, 50, 50, 0.85)";
     row.style.boxShadow = "0 0 8px rgba(0,0,0,0.5)";
@@ -100,10 +103,10 @@ function render() {
       : res.value;
 
     row.innerHTML = `
-      <div style="width:150px;">
+      <div style="min-width:180px; font-size:18px;">
   <strong>${res.icon} ${res.name}</strong>
 </div>
- <div style="font-size:24px; font-weight:bold; min-width:100px; text-align:center;">
+ <div style="font-size:28px; font-weight:bold; min-width:120px; text-align:center;">
   ${displayValue}
  </div>
     <button onclick="change(${i}, 1)">+1</button>
